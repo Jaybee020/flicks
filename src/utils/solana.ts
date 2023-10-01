@@ -49,7 +49,5 @@ export async function getNFTsOfAddr(addr: string) {
       params: { show_attribute: false },
     }
   );
-  console.log(res.data);
-
   return res.data.data.map((nft) => nft.collection).filter((nft) => nft);
 }
