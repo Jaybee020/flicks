@@ -36,5 +36,8 @@
   },
   "prisma": {
     "schema": "./src/prisma/schema.prisma"
+  },
+  "engines": {
+    "node": ">=16"
   }
 }
