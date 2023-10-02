@@ -6,6 +6,7 @@ import {
   getNFTsOfAddr,
 } from "./solana";
 import { client } from "../config";
+import { Cluster } from "@solana/web3.js";
 
 export async function catchAndHandleErrors<T>(fn: () => Promise<T>) {
   try {
@@ -34,14 +35,18 @@ async function cache<T>(
   return run();
 }
 
-export async function getOrCreateCollectionData(collectionAddr: string) {
+export async function getOrCreateCollectionData(
+  collectionAddr: string,
+  network: Cluster = "mainnet-beta"
+) {
   const collectionInfo = await prisma.collection.findUnique({
-    where: { address: collectionAddr },
+    where: { address: collectionAddr, network },
   });
   if (!collectionInfo) {
     //@ts-ignore
     const { name, image, description } = await getCollectionMetadata(
-      collectionAddr
+      collectionAddr,
+      network
     );
     return await prisma.collection.create({
       data: {
@@ -49,15 +54,19 @@ export async function getOrCreateCollectionData(collectionAddr: string) {
         name,
         image,
         description,
+        network,
       },
     });
   }
   return collectionInfo;
 }
 
-export async function getDomainProperties(addr: string) {
-  const key = `domain:${addr}`;
-  return cache(key, [addr], 60, getDomainFromAddr, client);
+export async function getDomainProperties(
+  addr: string,
+  network: Cluster = "mainnet-beta"
+) {
+  const key = `${network}:domain:${addr}`;
+  return cache(key, [addr, network], 60, getDomainFromAddr, client);
 }
 
 export async function ownsItemInCollection(

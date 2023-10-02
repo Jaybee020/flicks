@@ -5,6 +5,7 @@ import {
   getOrCreateCollectionData,
   ownsItemInCollection,
 } from "./utils/server-helpers";
+import { Cluster } from "@solana/web3.js";
 
 const app = express();
 
@@ -15,7 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/domain/:addr", async (req, res) => {
   try {
     const { addr } = req.params;
-    const domainData = await getDomainProperties(addr);
+    const { network } = req.query;
+    const domainData = await getDomainProperties(addr, network as Cluster);
     res.status(200).json(domainData);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -25,7 +27,11 @@ app.get("/domain/:addr", async (req, res) => {
 app.get("/collectionData/:addr", async (req, res) => {
   try {
     const { addr } = req.params;
-    const collectionData = await getOrCreateCollectionData(addr);
+    const { network } = req.query;
+    const collectionData = await getOrCreateCollectionData(
+      addr,
+      network as Cluster
+    );
     res.status(200).json(collectionData);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -34,7 +40,7 @@ app.get("/collectionData/:addr", async (req, res) => {
 
 app.get("/owner/:addr", async (req, res) => {
   const { addr } = req.params;
-  const { collectionName } = req.query;
+  const { collectionName, network } = req.query;
   const data = await ownsItemInCollection(addr, collectionName as string);
   if (data) {
     res.status(200).json({ message: "User owns an item in collection" });
