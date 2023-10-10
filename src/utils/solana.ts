@@ -8,7 +8,7 @@ import {
   reverseLookup,
   getDomainKeySync,
 } from "@bonfida/spl-name-service";
-import { solscanAPI } from "../config";
+import { magicEdenAPI } from "../config";
 import { catchAndHandleErrors } from "./server-helpers";
 
 export async function getCollectionMetadata(
@@ -49,11 +49,12 @@ export async function getDomainFromAddr(
 
 //not working saying rpc call has been disabled
 export async function getNFTsOfAddr(addr: string) {
-  const res = await solscanAPI.get<{ data: { collection?: string }[] }>(
-    `sol/account/own/all/${addr}`,
-    {
-      params: { show_attribute: false },
-    }
+  const res = await magicEdenAPI.get<{ collectionName?: string }[]>(
+    `wallets/${addr}/tokens`
   );
-  return res.data.data.map((nft) => nft.collection).filter((nft) => nft);
+  const collections = res.data
+    .map((nft) => nft.collectionName)
+    .filter((nft) => nft);
+
+  return [...new Set(collections)];
 }

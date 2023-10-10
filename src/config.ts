@@ -12,9 +12,9 @@ client
     console.error(error);
   })
   .connect();
-export const solscanAPI = axios.create({
-  baseURL: "https://solanaapi.nftscan.com/api/",
-  headers: {
-    "X-API-KEY": process.env.SOLSCAN_API_KEY,
-  },
+export const magicEdenAPI = axios.create({
+  baseURL: "https://api-mainnet.magiceden.dev/v2/",
+  // headers: {
+  //   "X-API-KEY": process.env.SOLSCAN_API_KEY,
+  // },
 });

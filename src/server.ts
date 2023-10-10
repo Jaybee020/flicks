@@ -39,15 +39,19 @@ app.get("/collectionData/:addr", async (req, res) => {
 });
 
 app.get("/owner/:addr", async (req, res) => {
-  const { addr } = req.params;
-  const { collectionName, network } = req.query;
-  const data = await ownsItemInCollection(addr, collectionName as string);
-  if (data) {
-    res.status(200).json({ message: "User owns an item in collection" });
-  } else {
-    res
-      .status(404)
-      .json({ message: "User does not own an item in collection" });
+  try {
+    const { addr } = req.params;
+    const { collectionName } = req.query;
+    const data = await ownsItemInCollection(addr, collectionName as string);
+    if (data) {
+      res.status(200).json({ message: "User owns an item in collection" });
+    } else {
+      res
+        .status(404)
+        .json({ message: "User does not own an item in collection" });
+    }
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
   }
 });
 
