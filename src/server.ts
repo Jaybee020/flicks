@@ -11,6 +11,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static("src/public"));
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/domain/:addr", async (req, res) => {
